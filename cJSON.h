@@ -85,28 +85,29 @@ then using the CJSON_API_VISIBILITY flag to "export" the same symbols the way CJ
 
 #include <stddef.h>
 
-/* cJSON Types: */
-#define cJSON_Invalid (0)
-#define cJSON_False  (1 << 0)
-#define cJSON_True   (1 << 1)
-#define cJSON_NULL   (1 << 2)
-#define cJSON_Number (1 << 3)
-#define cJSON_String (1 << 4)
-#define cJSON_Array  (1 << 5)
-#define cJSON_Object (1 << 6)
-#define cJSON_Raw    (1 << 7) /* raw json */
+/* cJSON Types: */      //定义cJSON的类型，全都是二进制位的形式，方便进行位运算，快速判断数据类型
+#define cJSON_Invalid (0)           //0000 0000
+#define cJSON_False  (1 << 0)       //0000 0001
+#define cJSON_True   (1 << 1)       //0000 0010
+#define cJSON_NULL   (1 << 2)       //0000 0100
+#define cJSON_Number (1 << 3)       //0000 1000
+#define cJSON_String (1 << 4)       //0001 0000
+#define cJSON_Array  (1 << 5)       //0010 0000
+#define cJSON_Object (1 << 6)       //0100 0000
+#define cJSON_Raw    (1 << 7)       //1000 0000
+/* raw json */
 
-#define cJSON_IsReference 256
-#define cJSON_StringIsConst 512
+#define cJSON_IsReference 256       //(1 << 8)引用类型，表示这个cJSON对象是一个引用，不是cJSON自己申请的内存，不能被cJSON_Delete()函数删除，避免double free的错误
+#define cJSON_StringIsConst 512     //(1 << 9)字符串常量类型，表示这个cJSON对象的字符串是一个常量，不能被cJSON_Delete()函数删除
 
 /* The cJSON structure: */
-typedef struct cJSON
+typedef struct cJSON        //'名称/值'对
 {
     /* next/prev allow you to walk array/object chains. Alternatively, use GetArraySize/GetArrayItem/GetObjectItem */
-    struct cJSON *next;
-    struct cJSON *prev;
+    struct cJSON *next;     //下一个'名称/值'对
+    struct cJSON *prev;     //上一个'名称/值'对
     /* An array or object item will have a child pointer pointing to a chain of the items in the array/object. */
-    struct cJSON *child;
+    struct cJSON *child;    
 
     /* The type of the item, as above. */
     int type;
